@@ -5,7 +5,7 @@ from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms.functional as TF
 from . import dense_transforms
 
-RESCUE_TIMEOUT = 30
+RESCUE_TIMEOUT = 90
 TRACK_OFFSET = 15
 DATASET_PATH = 'drive_data'
 
@@ -78,6 +78,9 @@ class PyTux:
                               data
         :return: Number of steps played
         """
+
+        import io
+
         if self.k is not None and self.k.config.track == track:
             self.k.restart()
             self.k.step()
@@ -87,7 +90,9 @@ class PyTux:
                 del self.k
             config = pystk.RaceConfig(num_kart=1, laps=1, track=track)
             config.players[0].controller = pystk.PlayerConfig.Controller.PLAYER_CONTROL
-
+            print ("step size: ", config.step_size)
+            config.step_size *= 2.0
+            print ("step size: ", config.step_size)
             self.k = pystk.Race(config)
             self.k.start()
             self.k.step()
@@ -100,6 +105,8 @@ class PyTux:
         if verbose:
             import matplotlib.pyplot as plt
             fig, ax = plt.subplots(1, 1)
+
+        frames = []
 
         for t in range(max_frames):
 
@@ -143,9 +150,26 @@ class PyTux:
                     ax.add_artist(plt.Circle(WH2*(1+aim_point_image), 2, ec='g', fill=False, lw=1.5))
                 plt.pause(1e-3)
 
+                with io.BytesIO() as buff:
+                    fig.savefig(buff, format='raw')
+                    buff.seek(0)
+                    data = np.frombuffer(buff.getvalue(), dtype=np.uint8)
+                w, h = fig.canvas.get_width_height()
+                im = data.reshape((int(h), int(w), -1))
+
+                frames.append(im)
+
             self.k.step(action)
             t += 1
-        return t, kart.overall_distance / track.length
+
+            print (t)
+
+        if verbose:
+            import imageio
+            import datetime
+
+            imageio.mimwrite("test_{0}.mp4".format(datetime.datetime.utcnow()), frames, fps=30, bitrate=1000000)
+            return t, kart.overall_distance / track.length
 
     def close(self):
         """

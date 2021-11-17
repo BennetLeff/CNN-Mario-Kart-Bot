@@ -1,5 +1,6 @@
 import pystk
 
+import math
 
 def control(aim_point, current_vel):
     """
@@ -22,13 +23,28 @@ def control(aim_point, current_vel):
     The point (-1,-1) is on the top left, (1, 1) the bottom right. 
     """
 
-    target_velocity = 20
+    target_velocity = 10
 
-    action.acceleration = 1
-    if current_vel == target_velocity: action.acceleration = 0
+    if current_vel >= target_velocity: 
+        action.acceleration = 0
+    else:
+        action.acceleration = 0.5
 
-    if aim_point[0] < 0: action.steer = 0.25
-    if aim_point[0] > 0: action.steer = -0.25
+    clip = lambda x, l, u: l if x < l else u if x > u else x
+
+    print (" action.steer: {} \n aimpoint: {}".format(action.steer, aim_point[0]))
+    action.steer = aim_point[0] * 2
+    action.steer = clip(action.steer, -1, 1)
+
+
+    # if we're needing to steer and we're moving fast enough, then drift
+    if abs(aim_point[0]) > 0.5 and current_vel > (target_velocity * 0.85):
+        action.drift = True
+        # print ("drifted")
+    else:
+        action.drift = False
+
+    # print (action)
 
     return action
 

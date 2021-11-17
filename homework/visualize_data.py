@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 
 
+from PIL import Image
+
 def main(args):
     dataset = SuperTuxDataset(args.dataset)
 
@@ -18,9 +20,12 @@ def main(args):
         axes[i].axis('off')
         circle = Circle(WH2*(point+1), ec='r', fill=False, lw=2)
         axes[i].add_patch(circle)
+        axes[i].label = point
+
+        print ("aimpoint: ", point)
 
     plt.show()
-
+    plt.savefig('visualization.png')
 
 if __name__ == '__main__':
     import argparse
