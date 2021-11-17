@@ -29,13 +29,16 @@ def control(aim_point, current_vel):
     target_velocity = 10
 
     # when we're driving fairly straight we can speed up
-    if abs(aim_point[0]) < 0.2:
+    if abs(aim_point[0]) < 0.3:
         target_velocity = max_velocity
         action.acceleration = 1
     # accelerate slower when we're turning
     # target a lower velocity when we're turning
     else:
-        target_velocity = max_velocity - (max_velocity * abs(aim_point[0]))
+        # add a constant to target velocity because we never actually want to stop
+        # 1) that would be slow
+        # 2) that would trigger the rescue condition
+        target_velocity = 5.0 + max_velocity - (max_velocity * abs(aim_point[0]))
         action.acceleration = 1.0 - abs(aim_point[0])
 
     if current_vel >= target_velocity: 
