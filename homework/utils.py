@@ -90,9 +90,6 @@ class PyTux:
                 del self.k
             config = pystk.RaceConfig(num_kart=1, laps=1, track=track)
             config.players[0].controller = pystk.PlayerConfig.Controller.PLAYER_CONTROL
-            print ("step size: ", config.step_size)
-            config.step_size *= 2.0
-            print ("step size: ", config.step_size)
             self.k = pystk.Race(config)
             self.k.start()
             self.k.step()
@@ -168,7 +165,7 @@ class PyTux:
             import imageio
             import datetime
 
-            imageio.mimwrite("test_{0}.mp4".format(datetime.datetime.utcnow()), frames, fps=30, bitrate=1000000)
+            imageio.mimwrite("test_{0}_{1}_{2}.mp4".format(datetime.datetime.utcnow(), self.k.config.track, t), frames, fps=30, bitrate=1000000)
             return t, kart.overall_distance / track.length
 
     def close(self):

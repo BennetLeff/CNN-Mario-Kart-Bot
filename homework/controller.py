@@ -23,28 +23,37 @@ def control(aim_point, current_vel):
     The point (-1,-1) is on the top left, (1, 1) the bottom right. 
     """
 
+    # apparently the max is 23?
+    max_velocity = 23
+
     target_velocity = 10
+
+    # when we're driving fairly straight we can speed up
+    if abs(aim_point[0]) < 0.2:
+        target_velocity = max_velocity
+        action.acceleration = 1
+    # accelerate slower when we're turning
+    # target a lower velocity when we're turning
+    else:
+        target_velocity = max_velocity - (max_velocity * abs(aim_point[0]))
+        action.acceleration = 1.0 - abs(aim_point[0])
 
     if current_vel >= target_velocity: 
         action.acceleration = 0
-    else:
-        action.acceleration = 0.5
 
     clip = lambda x, l, u: l if x < l else u if x > u else x
 
-    print (" action.steer: {} \n aimpoint: {}".format(action.steer, aim_point[0]))
+    # print (" action.steer: {} \n aimpoint: {}".format(action.steer, aim_point[0]))
     action.steer = aim_point[0] * 2
     action.steer = clip(action.steer, -1, 1)
 
-
     # if we're needing to steer and we're moving fast enough, then drift
-    if abs(aim_point[0]) > 0.5 and current_vel > (target_velocity * 0.85):
+    if abs(aim_point[0]) > 0.5 and current_vel > (target_velocity * 0.5):
         action.drift = True
-        # print ("drifted")
+    elif abs(aim_point[0]) > 0.7:
+        action.drift = True
     else:
         action.drift = False
-
-    # print (action)
 
     return action
 
