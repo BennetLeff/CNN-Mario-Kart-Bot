@@ -38,7 +38,7 @@ def control(aim_point, current_vel):
         # add a constant to target velocity because we never actually want to stop
         # 1) that would be slow
         # 2) that would trigger the rescue condition
-        target_velocity = 5.0 + max_velocity - (max_velocity * abs(aim_point[0]))
+        target_velocity = 7.5 + max_velocity - (max_velocity * abs(aim_point[0]))
         action.acceleration = 1.0 - abs(aim_point[0])
 
     if current_vel >= target_velocity: 
@@ -46,7 +46,6 @@ def control(aim_point, current_vel):
 
     clip = lambda x, l, u: l if x < l else u if x > u else x
 
-    # print (" action.steer: {} \n aimpoint: {}".format(action.steer, aim_point[0]))
     action.steer = aim_point[0] * 2
     action.steer = clip(action.steer, -1, 1)
 
