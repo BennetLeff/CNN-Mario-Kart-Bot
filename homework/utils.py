@@ -166,7 +166,7 @@ class PyTux:
             import datetime
 
             imageio.mimwrite("test_{0}_{1}_{2}.mp4".format(datetime.datetime.utcnow(), self.k.config.track, t), frames, fps=30, bitrate=1000000)
-            return t, kart.overall_distance / track.length
+        return t, kart.overall_distance / track.length
 
     def close(self):
         """

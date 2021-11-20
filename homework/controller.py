@@ -46,7 +46,7 @@ def control(aim_point, current_vel):
 
     clip = lambda x, l, u: l if x < l else u if x > u else x
 
-    action.steer = aim_point[0] * 2
+    action.steer = aim_point[0] * 2.0
     action.steer = clip(action.steer, -1, 1)
 
     # if we're needing to steer and we're moving fast enough, then drift
