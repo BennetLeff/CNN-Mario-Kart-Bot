@@ -1,5 +1,5 @@
-# Homework 5
-I'm leaving the README light on details because this is a school project and I don't want it to be copied.
+# Mario Kart (open source) Bot
+This bot uses a CNN model I wrote and trained myself which along with some basic AI driving code can actually play mario kart!
 
 I'm including two videos of the bot working :)
 
